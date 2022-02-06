@@ -1,3 +1,5 @@
+const assignStatus = require("./game-engine/assignStatus");
+const displayLogic = require("./game-engine/displayLogic");
 var WebSocketServer = require("ws").Server,
   wss = new WebSocketServer({ port: 8080 });
 
@@ -12,39 +14,12 @@ let clientMap = new Map();
 let reverseClientMap = new Map();
 
 wss.on("connection", function (ws, req) {
+  console.log("Waiting for Players to join");
   ws.on("message", function (message) {
     let messageFromClient = message.toString();
-    assignStatus(messageFromClient, numberOfVisitors);
+    let turn = assignStatus(messageFromClient, numberOfVisitors);
     if (numberOfVisitors < 2) {
       console.log("waiting for other player to join");
-    } else displayLogic();
+    } else displayLogic(wss, value, grid, clientMap, reverseClientMap, turn);
   });
 });
-
-function assignStatus(messageFromClient, numberOfVisitors) {
-  if (messageFromClient == "Player" && numberOfVisitors <= 1) {
-    numberOfVisitors++;
-    clientMap.set("X", ws);
-    reverseClientMap.set(ws, "X");
-  } else if (messageFromClient == "Player" && numberOfVisitors == 1) {
-    numberOfVisitors++;
-    clientMap.set("O", ws);
-    reverseClientMap.set(ws, "O");
-  } else {
-    clientMap.set("#", ws);
-    reverseClientMap.set(ws, "#");
-  }
-}
-
-function displayLogic() {
-  value = Number(messageFromClient) - 1;
-  numberOfMoves++;
-  grid[Math.floor(value / 3)][value % 3] = reverseClientMap.get(ws) ? "X" : "O";
-  wss.clients.forEach(function each(client) {
-    client.send(
-      `\n\n\n${grid[0].join("   ")} \n\n\n${grid[1].join(
-        "   "
-      )} \n\n\n${grid[2].join("   ")} \n\n\n`
-    );
-  });
-}
