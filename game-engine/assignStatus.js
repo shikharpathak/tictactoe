@@ -1,18 +1,22 @@
 function assignStatus(messageFromClient, numberOfVisitors) {
+  if (isStatusX(messageFromClient, numberOfVisitors) === "X") return "X";
+  if (isStatusO(messageFromClient, numberOfVisitors) === "O") return "O";
+  else {
+    return "#";
+  }
+}
+
+function isStatusX(messageFromClient, numberOfVisitors) {
   if (messageFromClient == "Player" && numberOfVisitors <= 1) {
     numberOfVisitors++;
-    clientMap.set("X", ws);
-    reverseClientMap.set(ws, "X");
     return "X";
-  } else if (messageFromClient == "Player" && numberOfVisitors == 1) {
+  }
+}
+
+function isStatusO(messageFromClient, numberOfVisitors) {
+  if (messageFromClient == "Player" && numberOfVisitors == 1) {
     numberOfVisitors++;
-    clientMap.set("O", ws);
-    reverseClientMap.set(ws, "O");
     return "O";
-  } else {
-    clientMap.set("#", ws);
-    reverseClientMap.set(ws, "#");
-    return "#";
   }
 }
 module.exports = assignStatus;

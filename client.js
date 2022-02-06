@@ -1,19 +1,26 @@
 const WebSocket = require("ws");
 const inquirer = require("inquirer");
-const getHash = require("./mapper");
+const getHash = require("./game-engine/mapper");
 
 let answers = [];
 let moves = [];
 let hashedMoves = [];
 
-async function connect(address, port) {
+async function connect(address, port, name) {
+  console.log(address, port, name);
   console.log(`Attempting to connect to ${address} at ${port}...`);
   socket = new WebSocket(`ws://${address}:${port}`);
-  console.log(`Attempting successful to ${address} at ${port}...`);
+  console.log(`${name}'s attempt successful.....`);
+
   socket.onopen = async function (ws) {
     console.log("Socket connected successfully");
+    socket.on("message", (message) => {
+      console.log(message.toString());
+    });
+    socket.send(`NAME ${name}`);
+
     playerOrSpectator = await inquirer.prompt({
-      name: "Question 1",
+      name: "Question",
       type: "list",
       message: "How would you like to join ?",
       choices: ["Player", "Spectator"],
@@ -21,15 +28,14 @@ async function connect(address, port) {
         return "Player";
       },
     });
-    socket.send(playerOrSpectator);
+    console.log(playerOrSpectator);
+    socket.send(playerOrSpectator.Question);
   };
-  socket.on("message", (message) => {
-    console.log(message.toString());
-  });
-  askName();
+
+  nextMove();
 }
 
-async function askName() {
+async function nextMove() {
   while (answers == null || answers.Move != 10) {
     answers = await inquirer.prompt({
       message: "What is your next move?",
@@ -39,7 +45,6 @@ async function askName() {
         return "Enter a number 1- 9";
       },
     });
-    // isValid();
     moves.push(getHash(answers.Move));
     hashedMoves.push(answers.Move);
 
@@ -49,5 +54,4 @@ async function askName() {
   }
 }
 
-const arguments = process.argv.splice(2);
-connect(arguments[0], arguments[1]);
+connect(process.argv[2], process.argv[3], process.argv[4]);
