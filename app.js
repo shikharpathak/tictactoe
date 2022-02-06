@@ -1,53 +1,50 @@
 var WebSocketServer = require("ws").Server,
   wss = new WebSocketServer({ port: 8080 });
 
-const arrMessage = [];
-let grid = ["_", "_", "_", "_", "_", "_", "_", "_", "_"];
+let grid = [
+  ["_", "_", "_"],
+  ["_", "_", "_"],
+  ["_", "_", "_"],
+];
+let numberOfVisitors = 0;
 let value = 100;
-let numberOfMoves = 0;
+let clientMap = new Map();
+let reverseClientMap = new Map();
+
 wss.on("connection", function (ws, req) {
-  console.log("=============");
-  ws.send("SERVER LIKES YOU");
   ws.on("message", function (message) {
-    arrMessage.push(message);
-    value = Number(message.toString()) - 1;
-    numberOfMoves++;
-    grid[value] = numberOfMoves % 2 == 1 ? "X" : "O";
-    console.log(grid);
-    wss.clients.forEach(function each(client) {
-      client.send(message.toString());
-    });
+    let messageFromClient = message.toString();
+    assignStatus(messageFromClient, numberOfVisitors);
+    if (numberOfVisitors < 2) {
+      console.log("waiting for other player to join");
+    } else displayLogic();
   });
 });
-// const arr = [1, 2, 3];
-// function gameLogic(arr) {
-//   if (isSubArray) {
-//   }
-// }
 
-// function isSubArray(A, B, n, m) {
-//   const array = A.sort();
+function assignStatus(messageFromClient, numberOfVisitors) {
+  if (messageFromClient == "Player" && numberOfVisitors <= 1) {
+    numberOfVisitors++;
+    clientMap.set("X", ws);
+    reverseClientMap.set(ws, "X");
+  } else if (messageFromClient == "Player" && numberOfVisitors == 1) {
+    numberOfVisitors++;
+    clientMap.set("O", ws);
+    reverseClientMap.set(ws, "O");
+  } else {
+    clientMap.set("#", ws);
+    reverseClientMap.set(ws, "#");
+  }
+}
 
-//   var i = 0,
-//     j = 0;
-//   while (i < n && j < m) {
-//     if (A[i] == B[j]) {
-//       i++;
-//       j++;
-//       if (j == m) return true;
-//     } else {
-//       i = i - j + 1;
-//       j = 0;
-//     }
-//   }
-//   return false;
-// }
-// const winningArrays = [
-//   [11, 13, 17],
-//   [19, 23, 29],
-//   [31, 37, 41],
-//   [11, 23, 41],
-//   [17, 23, 31],
-// ];
-// const winningSum = [41, 71, 109, 75, 71];
-// winningSum.find();
+function displayLogic() {
+  value = Number(messageFromClient) - 1;
+  numberOfMoves++;
+  grid[Math.floor(value / 3)][value % 3] = reverseClientMap.get(ws) ? "X" : "O";
+  wss.clients.forEach(function each(client) {
+    client.send(
+      `\n\n\n${grid[0].join("   ")} \n\n\n${grid[1].join(
+        "   "
+      )} \n\n\n${grid[2].join("   ")} \n\n\n`
+    );
+  });
+}
