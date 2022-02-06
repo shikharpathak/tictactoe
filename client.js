@@ -2,39 +2,42 @@ const WebSocket = require("ws");
 const inquirer = require("inquirer");
 
 let answers = null;
-let moves = [];
-let socket = null;
 
 async function connect(address, port) {
   console.log(`Attempting to connect to ${address} at ${port}...`);
   socket = new WebSocket(`ws://${address}:${port}`);
   console.log(`Attempting success to ${address} at ${port}...`);
-  let check;
   console.log("here");
-  while (check != 10) {
-    check++;
-    console.log("there");
-    check = await askName();
-  }
+  socket.onopen = function (ws) {
+    console.log("Socket connected successfully");
+    setTimeout(() => {
+      socket.send("TONY IS BACK");
+    }, 0);
+  };
+  setTimeout(() => {
+    askName();
+  }, 0);
 }
 
 async function askName() {
-  console.log("Moves till now", answers);
-  answers = await inquirer.prompt({
-    message: "What is your next move?",
-    name: "move",
-    type: "input",
-    default() {
-      return "Enter a number 1- 9";
-    },
-  });
-
-  socket.on("message", async function (message) {
-    console.log("received: %s", message);
-    arr.push(message);
-    moves.push(answers);
-  });
-  return answers;
+  while (answers != 10) {
+    console.log("Moves till now", answers);
+    socket.on("message", function (message) {
+      console.log("MESSAGE FROM HYDRA", message.toString());
+    });
+    answers = await inquirer.prompt({
+      message: "What is your next move?",
+      name: "Move",
+      type: "input",
+      default() {
+        return "Enter a number 1- 9";
+      },
+    });
+    setTimeout(() => {
+      socket.send("Move -> ", answers);
+    }, 1000);
+    console.log("asnwer", answers);
+  }
 }
 
 const arguments = process.argv.splice(2);
