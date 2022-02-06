@@ -1,8 +1,10 @@
 const WebSocket = require("ws");
 const inquirer = require("inquirer");
+const getHash = require("./mapper");
 
-let answers = null;
+let answers = [];
 let moves = [];
+let hashedMoves = [];
 
 async function connect(address, port) {
   console.log(`Attempting to connect to ${address} at ${port}...`);
@@ -10,19 +12,15 @@ async function connect(address, port) {
   console.log(`Attempting success to ${address} at ${port}...`);
   socket.onopen = function (ws) {
     console.log("Socket connected successfully");
-    setTimeout(() => {
-      socket.send("TONY IS BACK");
-    }, 0);
+    // setTimeout(() => {
+    //   socket.send(1);
+    // }, 0);
   };
-  socket.on("message", function (message) {
-    console.log("MESSAGE FROM HYDRA", message.toString());
-  });
   askName();
 }
 
 async function askName() {
-  while (answers != 10) {
-    console.log("Moves till now", moves);
+  while (answers == null || answers.Move != 10) {
     answers = await inquirer.prompt({
       message: "What is your next move?",
       name: "Move",
@@ -31,10 +29,12 @@ async function askName() {
         return "Enter a number 1- 9";
       },
     });
-    moves.push(answers.Move);
-    console.log("asnwer", answers);
+    // isValid();
+    moves.push(getHash(answers.Move));
+    hashedMoves.push(answers.Move);
+
     setTimeout(() => {
-      socket.send(moves);
+      socket.send(answers.Move);
     }, 0);
   }
 }
