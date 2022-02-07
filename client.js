@@ -24,7 +24,7 @@ async function connect(address, port, name) {
       message: "How would you like to join ?",
       choices: ["Player", "Spectator"],
       default() {
-        return "Player";
+        return "Your Choice ";
       },
     });
     console.log(playerOrSpectator);

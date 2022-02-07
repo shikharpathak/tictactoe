@@ -8,13 +8,14 @@ let grid = [
   ["_", "_", "_"],
   ["_", "_", "_"],
 ];
+let gridFinal = ["_", "_", "_", "_", "_", "_", "_", "_", "_"];
 let numberOfVisitors = 0;
 let value = 100;
 let clientMap = new Map();
 let reverseClientMap = new Map();
 
 wss.on("connection", function (ws, req) {
-  console.log("Waiting for Players to join");
+  console.log("Welcome to the world of TIC TAC TOE");
   ws.on("message", function (message) {
     let messageFromClient = message.toString();
     flag = true;
@@ -30,7 +31,14 @@ wss.on("connection", function (ws, req) {
       if (visitors < 2) {
         console.log(visitors);
         console.log("waiting for other player to join");
-      } else displayLogic(wss, value, grid, messageFromClient, turn);
+      } else {
+        if (messageFromClient == "Player") {
+          console.log("helllllllllll");
+        } else {
+          console.log("I Am here", messageFromClient);
+          displayLogic(wss, value, gridFinal, messageFromClient, turn);
+        }
+      }
     }
   });
 });
