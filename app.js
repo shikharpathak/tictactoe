@@ -29,13 +29,10 @@ wss.on("connection", function (ws, req) {
       let { turn, visitors } = findTurn(messageFromClient, numberOfVisitors);
       numberOfVisitors = visitors;
       if (visitors < 2) {
-        console.log(visitors);
         console.log("waiting for other player to join");
       } else {
         if (messageFromClient == "Player") {
-          console.log("helllllllllll");
         } else {
-          console.log("I Am here", messageFromClient);
           displayLogic(wss, value, gridFinal, messageFromClient, turn);
         }
       }
