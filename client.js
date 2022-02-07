@@ -16,6 +16,7 @@ async function connect(address, port, name) {
     socket.on("message", (message) => {
       console.log(message.toString());
     });
+    console.log(name);
     socket.send(`NAME ${name}`);
 
     playerOrSpectator = await inquirer.prompt({
@@ -52,5 +53,5 @@ async function nextMove() {
     }, 0);
   }
 }
-
+console.log(process.argv[2], process.argv[3], process.argv[4]);
 connect(process.argv[2], process.argv[3], process.argv[4]);
