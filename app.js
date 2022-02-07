@@ -34,5 +34,3 @@ wss.on("connection", function (ws, req) {
     }
   });
 });
-
-// TODO(priyanshsaxena): if numberofVisitors ==1: socket.send("Awiting second player");
