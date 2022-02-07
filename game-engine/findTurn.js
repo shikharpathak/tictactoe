@@ -1,4 +1,4 @@
-function assignStatus(messageFromClient, numberOfVisitors) {
+function findTurn(messageFromClient, numberOfVisitors) {
   if (isStatusX(messageFromClient, numberOfVisitors) === "X") return "X";
   if (isStatusO(messageFromClient, numberOfVisitors) === "O") return "O";
   else {
@@ -19,4 +19,4 @@ function isStatusO(messageFromClient, numberOfVisitors) {
     return { turn: "O", numberOfVisitors: numberOfVisitors };
   }
 }
-module.exports = assignStatus;
+module.exports = findTurn;

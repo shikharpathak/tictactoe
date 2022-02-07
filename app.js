@@ -1,4 +1,4 @@
-const assignStatus = require("./game-engine/assignStatus");
+const findTurn = require("./game-engine/findTurn");
 const displayLogic = require("./game-engine/displayLogic");
 var WebSocketServer = require("ws").Server,
   wss = new WebSocketServer({ port: 8080 });
@@ -25,10 +25,8 @@ wss.on("connection", function (ws, req) {
     if (isMessageFromClientAName(messageFromClient)) {
       clientMap.set(messageFromClient.split(" "), "O");
     } else {
-      let { turn, visitors } = assignStatus(
-        messageFromClient,
-        numberOfVisitors
-      );
+      let { turn, visitors } = findTurn(messageFromClient, numberOfVisitors);
+      numberOfVisitors = visitors;
       if (visitors < 2) {
         console.log(visitors);
         console.log("waiting for other player to join");
