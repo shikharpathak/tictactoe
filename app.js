@@ -11,15 +11,14 @@ let grid = [
 let gridFinal = ["_", "_", "_", "_", "_", "_", "_", "_", "_"];
 let numberOfVisitors = 0;
 let value = 100;
-let clientMap = new Map();
-let reverseClientMap = new Map();
 let names = new Set();
 
+let flag = true;
 wss.on("connection", function (ws, req) {
   console.log("Welcome to the world of TIC TAC TOE");
   ws.on("message", function (message) {
     let messageFromClient = message.toString();
-    flag = true;
+
     if (flag && isMessageFromClientAName(messageFromClient)) {
       let player1 = messageFromClient.split(" ")[1];
       names.add({ [player1]: "X" });
