@@ -9,26 +9,22 @@ let hashedMoves = [];
 async function connect(address, port, nameOfPlayer) {
   console.log(`Attempting to connect to ${address} at ${port}...`);
   socket = new WebSocket(`ws://${address}:${port}`);
-  console.log(`${nameOfPlayer}'s attempt successful.....`);
 
   socket.onopen = async function (ws) {
     console.log("Socket connected successfully");
     socket.on("message", (message) => {
       console.log(message.toString());
     });
-    console.log(nameOfPlayer);
-    socket.send(`NAME ${nameOfPlayer}`);
-
+    socket.send(`NAME ${nameOfPlayer.toString()}`);
     playerOrSpectator = await inquirer.prompt({
       name: "Question",
       type: "list",
       message: "How would you like to join ?",
       choices: ["Player", "Spectator"],
       default() {
-        return "Your Choice ";
+        return "Your Choice";
       },
     });
-    console.log(playerOrSpectator);
     socket.send(playerOrSpectator.Question);
   };
 
