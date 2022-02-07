@@ -5,14 +5,18 @@ const getHash = require("./game-engine/mapper");
 let answers = [];
 let moves = [];
 let hashedMoves = [];
-
-async function connect(address, port, nameOfPlayer) {
+const nameOfPlayer = process.argv[4];
+let symbol = "#";
+async function connect(address, port) {
   console.log(`Attempting to connect to ${address} at ${port}...`);
   socket = new WebSocket(`ws://${address}:${port}`);
 
   socket.onopen = async function (ws) {
     console.log("Socket connected successfully");
+    symbol = ws;
     socket.on("message", (message) => {
+      if (message.toString().split(" ")[0] == "symbol")
+        symbol = message.toString().split(" ")[1];
       console.log(message.toString());
     });
     socket.send(`NAME ${nameOfPlayer.toString()}`);
@@ -27,8 +31,6 @@ async function connect(address, port, nameOfPlayer) {
     });
     socket.send(playerOrSpectator.Question);
   };
-
-  nextMove();
 }
 
 async function nextMove() {
@@ -43,10 +45,8 @@ async function nextMove() {
     });
     moves.push(getHash(answers.Move));
     hashedMoves.push(answers.Move);
-
-    setTimeout(() => {
-      socket.send(`answers.Move name ${nameOfPlayer}`);
-    }, 0);
+    socket.send(`${symbol} ${answers.Move}`);
   }
 }
-connect(process.argv[2], process.argv[3], process.argv[4]);
+connect(process.argv[2], process.argv[3]);
+nextMove();

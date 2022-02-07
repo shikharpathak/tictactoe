@@ -17,5 +17,6 @@ ${grid[6]} | ${grid[7]} | ${grid[8]}
     //   )} \n\n\n${grid[2].join("   ")} \n\n\n`
     // );
   });
+  return grid;
 }
 module.exports = displayLogic;
