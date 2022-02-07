@@ -7,7 +7,6 @@ let moves = [];
 let hashedMoves = [];
 
 async function connect(address, port, name) {
-  console.log(address, port, name);
   console.log(`Attempting to connect to ${address} at ${port}...`);
   socket = new WebSocket(`ws://${address}:${port}`);
   console.log(`${name}'s attempt successful.....`);

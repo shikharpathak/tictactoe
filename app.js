@@ -20,12 +20,10 @@ wss.on("connection", function (ws, req) {
     flag = true;
     if (flag && isMessageFromClientAName(messageFromClient)) {
       clientMap.set(messageFromClient.split(" "), "X");
-      reverseClientMap.set(ws, messageFromClient);
       flag = false;
     }
     if (isMessageFromClientAName(messageFromClient)) {
       clientMap.set(messageFromClient.split(" "), "O");
-      reverseClientMap.set(ws, messageFromClient);
     } else {
       let turn = assignStatus(messageFromClient, numberOfVisitors);
       if (numberOfVisitors < 2) {
