@@ -6,18 +6,18 @@ let answers = [];
 let moves = [];
 let hashedMoves = [];
 
-async function connect(address, port, name) {
+async function connect(address, port, nameOfPlayer) {
   console.log(`Attempting to connect to ${address} at ${port}...`);
   socket = new WebSocket(`ws://${address}:${port}`);
-  console.log(`${name}'s attempt successful.....`);
+  console.log(`${nameOfPlayer}'s attempt successful.....`);
 
   socket.onopen = async function (ws) {
     console.log("Socket connected successfully");
     socket.on("message", (message) => {
       console.log(message.toString());
     });
-    console.log(name);
-    socket.send(`NAME ${name}`);
+    console.log(nameOfPlayer);
+    socket.send(`NAME ${nameOfPlayer}`);
 
     playerOrSpectator = await inquirer.prompt({
       name: "Question",
@@ -49,9 +49,8 @@ async function nextMove() {
     hashedMoves.push(answers.Move);
 
     setTimeout(() => {
-      socket.send(answers.Move);
+      socket.send(`answers.Move name ${nameOfPlayer}`);
     }, 0);
   }
 }
-console.log(process.argv[2], process.argv[3], process.argv[4]);
 connect(process.argv[2], process.argv[3], process.argv[4]);
