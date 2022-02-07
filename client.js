@@ -40,7 +40,7 @@ async function nextMove() {
       name: "Move",
       type: "input",
       default() {
-        return "Enter a number 1- 9";
+        return "Enter a number 0- 8";
       },
     });
     moves.push(getHash(answers.Move));

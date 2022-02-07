@@ -1,5 +1,3 @@
-const { Socket } = require("socket.io");
-const displayLogic = require("./game-engine/displayLogic");
 var WebSocketServer = require("ws").Server,
   wss = new WebSocketServer({ port: 8080 });
 
@@ -20,7 +18,6 @@ wss.on("connection", function (ws, req) {
 
     {
       const splitMessage = messageFromClient.split(" ");
-      console.log("nameOfPlayer -> ", splitMessage);
       const symbolOfPlayer = splitMessage[0];
       value = Number(messageFromClient) - 1;
       gridFinal[splitMessage[1]] = symbolOfPlayer;
