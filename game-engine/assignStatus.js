@@ -2,21 +2,21 @@ function assignStatus(messageFromClient, numberOfVisitors) {
   if (isStatusX(messageFromClient, numberOfVisitors) === "X") return "X";
   if (isStatusO(messageFromClient, numberOfVisitors) === "O") return "O";
   else {
-    return "#";
+    return { turn: "#", numberOfVisitors: numberOfVisitors };
   }
 }
 
 function isStatusX(messageFromClient, numberOfVisitors) {
   if (messageFromClient == "Player" && numberOfVisitors <= 1) {
     numberOfVisitors++;
-    return "X";
+    return { turn: "X", numberOfVisitors: numberOfVisitors };
   }
 }
 
 function isStatusO(messageFromClient, numberOfVisitors) {
   if (messageFromClient == "Player" && numberOfVisitors == 1) {
     numberOfVisitors++;
-    return "O";
+    return { turn: "O", numberOfVisitors: numberOfVisitors };
   }
 }
 module.exports = assignStatus;

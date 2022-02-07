@@ -25,10 +25,14 @@ wss.on("connection", function (ws, req) {
     if (isMessageFromClientAName(messageFromClient)) {
       clientMap.set(messageFromClient.split(" "), "O");
     } else {
-      let turn = assignStatus(messageFromClient, numberOfVisitors);
-      if (numberOfVisitors < 2) {
+      let { turn, visitors } = assignStatus(
+        messageFromClient,
+        numberOfVisitors
+      );
+      if (visitors < 2) {
+        console.log(visitors);
         console.log("waiting for other player to join");
-      } else displayLogic(wss, value, grid, clientMap, reverseClientMap, turn);
+      } else displayLogic(wss, value, grid, messageFromClient, turn);
     }
   });
 });
