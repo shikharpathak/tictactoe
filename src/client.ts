@@ -1,20 +1,28 @@
 const webSocket = require("ws");
 const inquirer = require("inquirer");
 
-let answers = null;
+let answers: { Move: any } | null = null;
 const nameOfPlayer = process.argv[4];
 let symbolOfPlayer = "#";
-let socket;
+let socket: {
+  onopen: (ws: any) => Promise<void>;
+  on: (
+    arg0: string,
+    arg1: { (message: any): void; (message: any): void }
+  ) => void;
+  send: (arg0: string) => void;
+  onclose: (event: any) => never;
+};
 let moves = 0;
-async function connect(address, port) {
+async function connect(address: string, port: string) {
   console.log(`Attempting to connect to ${address} at ${port}...`);
 
   socket = new webSocket(`ws://${address}:${port}`);
 
-  socket.onopen = async function (ws) {
+  socket.onopen = async function (ws: any) {
     console.log("Socket connected successfully");
 
-    socket.on("message", (message) => {
+    socket.on("message", (message: { toString: () => string }) => {
       if (message.toString().split(" ")[0] == "symbolOfPlayer")
         symbolOfPlayer = message.toString().split(" ")[1];
       console.log(`\n ${message.toString()}`);
@@ -50,12 +58,12 @@ async function nextMove() {
     socket.send(`${symbolOfPlayer} ${answers.Move}`);
   }
 
-  socket.onclose = function (event) {
+  socket.onclose = function (event: { code: any }) {
     console.log(event.code);
     process.exit();
   };
 
-  socket.on("close", (message) => {
+  socket.on("close", (message: { toString: () => any }) => {
     console.log(`\n ${message.toString()}`);
   });
 }

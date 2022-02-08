@@ -1,5 +1,0 @@
-. check who has sent the move and who's turn it was. if invalid ignore
-2. one pos can not be used for two different moves
-3. after every move call winning logic
-4. if the move has been sent by a spectator, ignore.
-

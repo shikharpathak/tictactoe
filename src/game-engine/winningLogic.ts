@@ -1,15 +1,15 @@
-let getHashedValue = require("../helper/getHashedValue");
+let getHashValue = require("../helper/getHashedValue");
 const winningSum = [41, 71, 109, 75, 71];
 const winX = "X has won";
 const winO = "O has won";
 
 module.exports = function winningLogic(
-  position,
-  positionsOf_X,
-  positionsOf_O,
-  hashedMap
+  position: any,
+  positionsOf_X: any,
+  positionsOf_O: any,
+  hashedMap: any
 ) {
-  let hashedValue = getHashedValue(hashedMap, position);
+  let hashedValue = getHashValue(hashedMap, position);
 
   const xHasWon = checkX(positionsOf_X, hashedValue);
 
@@ -18,34 +18,36 @@ module.exports = function winningLogic(
   return xHasWon || oHasWon;
 };
 
-function checkX(positionsOf_X, hashedValue) {
+function checkX(positionsOf_X: any[], hashedValue: any) {
   positionsOf_X.push(hashedValue);
 
-  positionsOf_X = positionsOf_X.filter((element) => {
+  positionsOf_X = positionsOf_X.filter((element: undefined) => {
     return element !== undefined;
   });
 
   const currentSum = positionsOf_X.reduce(
-    (previous, current) => previous + current,
+    (previous: any, current: any) => previous + current,
     0
   );
   const found = winningSum.find((sum) => sum === currentSum);
 
-  if (found >= 41 && found <= 110) return found == currentSum ? winX : false;
+  if (found !== undefined && found >= 41 && found <= 110)
+    return found == currentSum ? winX : false;
 }
 
-function checkO(positionsOf_O, hashedValue) {
+function checkO(positionsOf_O: any[], hashedValue: any) {
   positionsOf_O.push(hashedValue);
 
-  positionsOf_O = positionsOf_O.filter((element) => {
+  positionsOf_O = positionsOf_O.filter((element: undefined) => {
     return element !== undefined;
   });
 
   const currentSum = positionsOf_O.reduce(
-    (previous, current) => previous + current,
+    (previous: any, current: any) => previous + current,
     0
   );
   const found = winningSum.find((sum) => sum === currentSum);
 
-  if (found >= 41 && found <= 110) return found == currentSum ? winO : false;
+  if (found !== undefined && found >= 41 && found <= 110)
+    return found == currentSum ? winO : false;
 }
