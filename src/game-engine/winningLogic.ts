@@ -1,11 +1,9 @@
-import getHashedValue from "../helper/getHashedValue";
-
+let getHashedValue = require("../helper/getHashedValue");
 const winningSum = [41, 71, 109, 75, 71];
 const winX = "X has won";
 const winO = "O has won";
 
-export default function winningLogic(
-  turn,
+module.exports = function winningLogic(
   position,
   positionsOf_X,
   positionsOf_O,
@@ -13,12 +11,12 @@ export default function winningLogic(
 ) {
   let hashedValue = getHashedValue(hashedMap, position);
 
-  const xWon = checkX(positionsOf_X, hashedValue);
+  const xHasWon = checkX(positionsOf_X, hashedValue);
 
-  const oWon = checkO(positionsOf_O, hashedValue);
+  const oHasWon = checkO(positionsOf_O, hashedValue);
 
-  return xWon || oWon;
-}
+  return xHasWon || oHasWon;
+};
 
 function checkX(positionsOf_X, hashedValue) {
   positionsOf_X.push(hashedValue);

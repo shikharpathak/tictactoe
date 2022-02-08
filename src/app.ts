@@ -1,7 +1,7 @@
-import winningLogic from "./game-engine/winningLogic";
-import displayGrid from "./helper/displayGrid";
-import getHashedValue from "./helper/getHashedValue";
-import removeAllClients from "./helper/removeAllClients";
+const winningLogic = require("../game-engine/gameLogic");
+const displayGrid = require("./helper/displayGrid");
+const getHashedValue = require("./helper/getHashedValue");
+const removeAllClients = require("./helper/removeAllClients.ts");
 
 var WebSocketServer = require("ws").Server,
   wss = new WebSocketServer({ port: 8080 });
@@ -52,7 +52,6 @@ wss.on("connection", function (ws, req) {
         positions.delete(value);
 
         const gameState = winningLogic(
-          symbolOfPlayer,
           value + 1,
           positionsOf_X,
           positionsOf_X,
