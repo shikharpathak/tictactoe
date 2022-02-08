@@ -17,7 +17,7 @@ function getHash(key) {
   return hashMap.get(key.toString());
 }
 
-let gridFinal = ["_", "_", "_", "_", "_", "_", "_", "_", "_"];
+let grid = ["_", "_", "_", "_", "_", "_", "_", "_", "_"];
 let numberOfVisitors = 0;
 let value = 100;
 let positions = new Set([0, 1, 2, 3, 4, 5, 6, 7, 8]);
@@ -52,6 +52,7 @@ wss.on("connection", function (ws, req) {
         console.log(gameState);
         if (gameState == winO || gameState == winX) {
           console.log("END GAME");
+          ws.send("END GAME", displayGrid(wss, grid));
           ws.close(1000, gameState);
           wss.on("close", function close() {
             wss.clients.forEach(function each(client) {
@@ -61,14 +62,8 @@ wss.on("connection", function (ws, req) {
           });
         }
 
-        gridFinal[value] = symbolOfPlayer;
-        wss.clients.forEach(function each(client) {
-          client.send(
-            `\n ${gridFinal.slice(0, 3).join(" | ")} \n\n ${gridFinal
-              .slice(3, 6)
-              .join(" | ")} \n\n ${gridFinal.slice(6, 9).join(" | ")}  \n `
-          );
-        });
+        grid[value] = symbolOfPlayer;
+        displayGrid(wss, grid);
       }
     });
   }
@@ -110,4 +105,14 @@ function winningLogic(turn, position) {
   const found = winningSum.find((sum) => sum === currentSum);
   if (found >= 41 && found <= 110)
     return found == currentSum ? winO : " Continue";
+}
+
+function displayGrid(wss, grid) {
+  wss.clients.forEach(function each(client) {
+    client.send(
+      `\n ${grid.slice(0, 3).join(" | ")} \n\n ${grid
+        .slice(3, 6)
+        .join(" | ")} \n\n ${grid.slice(6, 9).join(" | ")}  \n `
+    );
+  });
 }
