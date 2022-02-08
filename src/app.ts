@@ -3,7 +3,6 @@
 var WebSocketServer = require("ws").Server,
   wss = new WebSocketServer({ port: 8080 });
 const hashMap = new Map();
-
 hashMap.set("1", 11);
 hashMap.set("2", 13);
 hashMap.set("3", 17);
@@ -21,7 +20,7 @@ function getHash(key) {
 let gridFinal = ["_", "_", "_", "_", "_", "_", "_", "_", "_"];
 let numberOfVisitors = 0;
 let value = 100;
-positions = new Set([0, 1, 2, 3, 4, 5, 6, 7, 8]);
+let positions = new Set([0, 1, 2, 3, 4, 5, 6, 7, 8]);
 let symbol = null;
 const winX = "X has won";
 const winO = "O has won";
@@ -55,12 +54,14 @@ wss.on("connection", function (ws, req) {
           console.log("END GAME");
           ws.close(1000, gameState);
           wss.on("close", function close() {
-            ws.send(gameState);
+            wss.clients.forEach(function each(client) {
+              client.send(gameState);
+              client.close(1000, gameState);
+            });
           });
         }
 
         gridFinal[value] = symbolOfPlayer;
-
         wss.clients.forEach(function each(client) {
           client.send(
             `\n ${gridFinal.slice(0, 3).join(" | ")} \n\n ${gridFinal
@@ -77,10 +78,10 @@ let positionsOf_O = [];
 function winningLogic(turn, position) {
   const winningSum = [41, 71, 109, 75, 71];
 
-  hash = getHash(position);
+  let hashedValue = getHash(position);
 
   if (turn == "X") {
-    positionsOf_X.push(hash);
+    positionsOf_X.push(hashedValue);
     positionsOf_X = positionsOf_X.filter((element) => {
       return element !== undefined;
     });
@@ -97,11 +98,11 @@ function winningLogic(turn, position) {
       return found == currentSum ? winX : " Continue";
   }
 
-  positionsOf_O.push(hash);
+  positionsOf_O.push(hashedValue);
   positionsOf_O = positionsOf_O.filter((element) => {
     return element !== undefined;
   });
-  currentSum = positionsOf_O.reduce(
+  const currentSum = positionsOf_O.reduce(
     (previous, current) => previous + current,
     0
   );

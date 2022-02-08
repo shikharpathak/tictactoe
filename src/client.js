@@ -1,10 +1,8 @@
 const WebSocket = require("ws");
 const inquirer = require("inquirer");
-const getHash = require("./game-engine/mapper");
 
 let answers = [];
-let moves = [];
-let hashedMoves = [];
+
 const nameOfPlayer = process.argv[4];
 let symbol = "#";
 async function connect(address, port) {
@@ -42,8 +40,6 @@ async function nextMove() {
         return "Enter a number 1- 9";
       },
     });
-    moves.push(getHash(answers.Move));
-    hashedMoves.push(answers.Move);
     socket.send(`${symbol} ${answers.Move}`);
   }
   socket.onclose = function (event) {

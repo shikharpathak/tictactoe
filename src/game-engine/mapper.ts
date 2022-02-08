@@ -1,17 +1,17 @@
-const hashMap = new Map();
+const hashedMap = new Map();
 
-hashMap.set("1", 11);
-hashMap.set("2", 13);
-hashMap.set("3", 17);
-hashMap.set("4", 19);
-hashMap.set("5", 23);
-hashMap.set("6", 29);
-hashMap.set("7", 31);
-hashMap.set("8", 37);
-hashMap.set("9", 41);
+hashedMap.set("1", 11);
+hashedMap.set("2", 13);
+hashedMap.set("3", 17);
+hashedMap.set("4", 19);
+hashedMap.set("5", 23);
+hashedMap.set("6", 29);
+hashedMap.set("7", 31);
+hashedMap.set("8", 37);
+hashedMap.set("9", 41);
 
-function getHash(key) {
-  return hashMap.get(key.toString());
+function getHashedValue(key) {
+  return hashedMap.get(key.toString());
 }
 
-module.exports = getHash;
+module.exports = getHashedValue;
