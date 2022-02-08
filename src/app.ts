@@ -16,7 +16,8 @@ hashMap.set("9", 41);
 function getHash(key) {
   return hashMap.get(key.toString());
 }
-
+let positionsOf_X = [];
+let positionsOf_O = [];
 let grid = ["_", "_", "_", "_", "_", "_", "_", "_", "_"];
 let numberOfVisitors = 0;
 let value = 100;
@@ -24,11 +25,13 @@ let positions = new Set([0, 1, 2, 3, 4, 5, 6, 7, 8]);
 let symbol = null;
 const winX = "X has won";
 const winO = "O has won";
+
 wss.on("connection", function (ws, req) {
+  console.log("TIC TAC TOE");
   const assignment = ["X", "O"];
   symbol = numberOfVisitors < 2 ? assignment[numberOfVisitors] : "#";
   numberOfVisitors++;
-  ws.send(`symbol ${symbol}`);
+  ws.send(`symbolOfPlayer ${symbol}`);
   // if (numberOfVisitors < 2) {
   //   ws.send("Waiting for Player 2 to join");
   // } else
@@ -50,21 +53,24 @@ wss.on("connection", function (ws, req) {
         const gameState = winningLogic(symbolOfPlayer, value + 1);
         if (gameState == winO || gameState == winX) {
           console.log("END GAME");
-          ws.send("END GAME");
+
+          ws.send(`${gameState} END GAME`);
+
           grid[value] = symbolOfPlayer;
+
           ws.send(displayGrid(wss, grid));
-          ws.close(1000, gameState);
+
           removeAllClients(wss);
         }
 
         grid[value] = symbolOfPlayer;
+
         displayGrid(wss, grid);
       }
     });
   }
 });
-let positionsOf_X = [];
-let positionsOf_O = [];
+
 function winningLogic(turn, position) {
   const winningSum = [41, 71, 109, 75, 71];
 
@@ -72,6 +78,7 @@ function winningLogic(turn, position) {
 
   if (turn == "X") {
     positionsOf_X.push(hashedValue);
+
     positionsOf_X = positionsOf_X.filter((element) => {
       return element !== undefined;
     });
@@ -81,20 +88,24 @@ function winningLogic(turn, position) {
       0
     );
     const found = winningSum.find((sum) => sum === currentSum);
+
     if (found >= 41 && found <= 110)
       return found == currentSum ? winX : " Continue";
   }
 
   positionsOf_O.push(hashedValue);
+
   positionsOf_O = positionsOf_O.filter((element) => {
     return element !== undefined;
   });
+
   const currentSum = positionsOf_O.reduce(
     (previous, current) => previous + current,
     0
   );
 
   const found = winningSum.find((sum) => sum === currentSum);
+
   if (found >= 41 && found <= 110)
     return found == currentSum ? winO : " Continue";
 }
@@ -111,6 +122,6 @@ function displayGrid(wss, grid) {
 
 function removeAllClients(sockets) {
   sockets.clients.forEach(function (s) {
-    s.close();
+    s.close(1000, "Game has ended");
   });
 }

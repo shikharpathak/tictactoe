@@ -1,23 +1,28 @@
-const WebSocket = require("ws");
+const webSocket = require("ws");
 const inquirer = require("inquirer");
 
-let answers = [];
-
+let answers = null;
 const nameOfPlayer = process.argv[4];
-let symbol = "#";
+let symbolOfPlayer = "#";
+let socket;
+let moves = 0;
 async function connect(address, port) {
   console.log(`Attempting to connect to ${address} at ${port}...`);
-  socket = new WebSocket(`ws://${address}:${port}`);
+
+  socket = new webSocket(`ws://${address}:${port}`);
 
   socket.onopen = async function (ws) {
     console.log("Socket connected successfully");
+
     socket.on("message", (message) => {
-      if (message.toString().split(" ")[0] == "symbol")
-        symbol = message.toString().split(" ")[1];
+      if (message.toString().split(" ")[0] == "symbolOfPlayer")
+        symbolOfPlayer = message.toString().split(" ")[1];
       console.log(`\n ${message.toString()}`);
     });
+
     socket.send(`NAME ${nameOfPlayer.toString()}`);
-    playerOrSpectator = await inquirer.prompt({
+
+    let playerOrSpectator = await inquirer.prompt({
       name: "Question",
       type: "list",
       message: "How would you like to join ?",
@@ -26,12 +31,13 @@ async function connect(address, port) {
         return "Your Choice";
       },
     });
+
     socket.send(playerOrSpectator.Question);
   };
 }
 
 async function nextMove() {
-  while (answers == null || answers.Move != 10) {
+  while (answers == null || moves <= 6) {
     answers = await inquirer.prompt({
       message: "What is your next move?",
       name: "Move",
@@ -40,16 +46,25 @@ async function nextMove() {
         return "Enter a number 1- 9";
       },
     });
-    socket.send(`${symbol} ${answers.Move}`);
+    moves++;
+    socket.send(`${symbolOfPlayer} ${answers.Move}`);
   }
+
   socket.onclose = function (event) {
     console.log(event.code);
     process.exit();
   };
+
+  socket.on("close", (message) => {
+    console.log(`\n ${message.toString()}`);
+  });
 }
-console.log("symbol", symbol);
+
+console.log("symbolOfPlayer", symbolOfPlayer);
+
 connect(process.argv[2], process.argv[3]);
-if (symbol == "X" || symbol == "O") {
+if (symbolOfPlayer == "X" || symbolOfPlayer == "O") {
   console.log("here");
 }
+
 nextMove();

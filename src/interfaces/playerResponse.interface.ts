@@ -1,3 +1,3 @@
-export interface playerResponses {
+export interface playerResponse {
   Move: string;
 }
