@@ -55,7 +55,7 @@ async function nextMove() {
       },
     });
     moves++;
-    socket.send(`${symbolOfPlayer} ${answers.Move}`);
+    if (answers?.Move) socket.send(`${symbolOfPlayer} ${answers.Move}`);
   }
 
   socket.onclose = function (event: { code: any }) {

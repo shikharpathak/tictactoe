@@ -1,4 +1,4 @@
-const winningLogic = require("../game-engine/gameLogic");
+const winningLogic = require("./game-engine/winningLogic");
 const displayGrid = require("./helper/displayGrid");
 const getHashedValue = require("./helper/getHashedValue");
 const removeAllClients = require("./helper/removeAllClients.ts");
@@ -48,7 +48,7 @@ wss.on("connection", function (ws: any) {
         (symbolOfPlayer == "O" && positions.has(value))
       ) {
         positions.delete(value);
-
+        console.log("very much here");
         const gameState = winningLogic(
           value + 1,
           positionsOf_X,

@@ -11,14 +11,15 @@ module.exports = function winningLogic(
 ) {
   let hashedValue = getHashValue(hashedMap, position);
 
+  console.log("here");
   const xHasWon = checkX(positionsOf_X, hashedValue);
 
   const oHasWon = checkO(positionsOf_O, hashedValue);
-
-  return xHasWon || oHasWon;
+  if (xHasWon || oHasWon) return xHasWon || oHasWon;
 };
 
 function checkX(positionsOf_X: any[], hashedValue: any) {
+  console.log("XXXXXX");
   positionsOf_X.push(hashedValue);
 
   positionsOf_X = positionsOf_X.filter((element: undefined) => {
@@ -29,6 +30,7 @@ function checkX(positionsOf_X: any[], hashedValue: any) {
     (previous: any, current: any) => previous + current,
     0
   );
+  console.log("currentSum", currentSum);
   const found = winningSum.find((sum) => sum === currentSum);
 
   if (found !== undefined && found >= 41 && found <= 110)
@@ -37,7 +39,7 @@ function checkX(positionsOf_X: any[], hashedValue: any) {
 
 function checkO(positionsOf_O: any[], hashedValue: any) {
   positionsOf_O.push(hashedValue);
-
+  console.log("OOOOO2");
   positionsOf_O = positionsOf_O.filter((element: undefined) => {
     return element !== undefined;
   });
