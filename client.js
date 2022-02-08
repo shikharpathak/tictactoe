@@ -13,11 +13,10 @@ async function connect(address, port) {
 
   socket.onopen = async function (ws) {
     console.log("Socket connected successfully");
-    symbol = ws;
     socket.on("message", (message) => {
       if (message.toString().split(" ")[0] == "symbol")
         symbol = message.toString().split(" ")[1];
-      console.log(message.toString());
+      console.log(`\n ${message.toString()}`);
     });
     socket.send(`NAME ${nameOfPlayer.toString()}`);
     playerOrSpectator = await inquirer.prompt({
@@ -40,13 +39,21 @@ async function nextMove() {
       name: "Move",
       type: "input",
       default() {
-        return "Enter a number 0- 8";
+        return "Enter a number 1- 9";
       },
     });
     moves.push(getHash(answers.Move));
     hashedMoves.push(answers.Move);
     socket.send(`${symbol} ${answers.Move}`);
   }
+  socket.onclose = function (event) {
+    console.log(event.code);
+    process.exit();
+  };
 }
+console.log("symbol", symbol);
 connect(process.argv[2], process.argv[3]);
+if (symbol == "X" || symbol == "O") {
+  console.log("here");
+}
 nextMove();
