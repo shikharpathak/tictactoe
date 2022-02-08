@@ -46,20 +46,15 @@ wss.on("connection", function (ws, req) {
         (symbolOfPlayer == "O" && positions.has(value))
       ) {
         positions.delete(value);
-        console.log(positions);
 
         const gameState = winningLogic(symbolOfPlayer, value + 1);
-        console.log(gameState);
         if (gameState == winO || gameState == winX) {
           console.log("END GAME");
-          ws.send("END GAME", displayGrid(wss, grid));
+          ws.send("END GAME");
+          grid[value] = symbolOfPlayer;
+          ws.send(displayGrid(wss, grid));
           ws.close(1000, gameState);
-          wss.on("close", function close() {
-            wss.clients.forEach(function each(client) {
-              client.send(gameState);
-              client.close(1000, gameState);
-            });
-          });
+          removeAllClients(wss);
         }
 
         grid[value] = symbolOfPlayer;
@@ -81,14 +76,11 @@ function winningLogic(turn, position) {
       return element !== undefined;
     });
 
-    console.log(positionsOf_X);
     const currentSum = positionsOf_X.reduce(
       (previous, current) => previous + current,
       0
     );
-    console.log("current", currentSum);
     const found = winningSum.find((sum) => sum === currentSum);
-    console.log(found);
     if (found >= 41 && found <= 110)
       return found == currentSum ? winX : " Continue";
   }
@@ -114,5 +106,11 @@ function displayGrid(wss, grid) {
         .slice(3, 6)
         .join(" | ")} \n\n ${grid.slice(6, 9).join(" | ")}  \n `
     );
+  });
+}
+
+function removeAllClients(sockets) {
+  sockets.clients.forEach(function (s) {
+    s.close();
   });
 }
