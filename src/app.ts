@@ -1,3 +1,8 @@
+import winningLogic from "./game-engine/winningLogic";
+import displayGrid from "./helper/displayGrid";
+import getHashedValue from "./helper/getHashedValue";
+import removeAllClients from "./helper/removeAllClients";
+
 var WebSocketServer = require("ws").Server,
   wss = new WebSocketServer({ port: 8080 });
 
@@ -46,8 +51,14 @@ wss.on("connection", function (ws, req) {
       ) {
         positions.delete(value);
 
-        const gameState = winningLogic(symbolOfPlayer, value + 1);
-        if (gameState == winO || gameState == winX) {
+        const gameState = winningLogic(
+          symbolOfPlayer,
+          value + 1,
+          positionsOf_X,
+          positionsOf_X,
+          hashedMap
+        );
+        if (gameState == winX || gameState == winO) {
           console.log("END GAME");
 
           ws.send(`${gameState} END GAME`);
@@ -67,61 +78,41 @@ wss.on("connection", function (ws, req) {
   }
 });
 
-function winningLogic(turn, position) {
-  const winningSum = [41, 71, 109, 75, 71];
+// function winningLogic(turn, position) {
+//   const winningSum = [41, 71, 109, 75, 71];
 
-  let hashedValue = getHashedValue(position);
+//   let hashedValue = getHashedValue(hashedMap, position);
 
-  if (turn == "X") {
-    positionsOf_X.push(hashedValue);
+//   if (turn == "X") {
+//     positionsOf_X.push(hashedValue);
 
-    positionsOf_X = positionsOf_X.filter((element) => {
-      return element !== undefined;
-    });
+//     positionsOf_X = positionsOf_X.filter((element) => {
+//       return element !== undefined;
+//     });
 
-    const currentSum = positionsOf_X.reduce(
-      (previous, current) => previous + current,
-      0
-    );
-    const found = winningSum.find((sum) => sum === currentSum);
+//     const currentSum = positionsOf_X.reduce(
+//       (previous, current) => previous + current,
+//       0
+//     );
+//     const found = winningSum.find((sum) => sum === currentSum);
 
-    if (found >= 41 && found <= 110)
-      return found == currentSum ? winX : " Continue";
-  }
+//     if (found >= 41 && found <= 110)
+//       return found == currentSum ? winX : " Continue";
+//   }
 
-  positionsOf_O.push(hashedValue);
+//   positionsOf_O.push(hashedValue);
 
-  positionsOf_O = positionsOf_O.filter((element) => {
-    return element !== undefined;
-  });
+//   positionsOf_O = positionsOf_O.filter((element) => {
+//     return element !== undefined;
+//   });
 
-  const currentSum = positionsOf_O.reduce(
-    (previous, current) => previous + current,
-    0
-  );
+//   const currentSum = positionsOf_O.reduce(
+//     (previous, current) => previous + current,
+//     0
+//   );
 
-  const found = winningSum.find((sum) => sum === currentSum);
+//   const found = winningSum.find((sum) => sum === currentSum);
 
-  if (found >= 41 && found <= 110)
-    return found == currentSum ? winO : " Continue";
-}
-
-function displayGrid(wss, grid) {
-  wss.clients.forEach(function each(client) {
-    client.send(
-      `\n ${grid.slice(0, 3).join(" | ")} \n\n ${grid
-        .slice(3, 6)
-        .join(" | ")} \n\n ${grid.slice(6, 9).join(" | ")}  \n `
-    );
-  });
-}
-
-function removeAllClients(sockets) {
-  sockets.clients.forEach(function (s) {
-    s.close(1000, "Game has ended");
-  });
-}
-
-function getHashedValue(key) {
-  return hashedMap.get(key.toString());
-}
+//   if (found >= 41 && found <= 110)
+//     return found == currentSum ? winO : " Continue";
+// }
